@@ -3,16 +3,19 @@ package com.example.shopping.domain.entity.user;
 import java.time.LocalDateTime;
 
 import com.example.shopping.domain.entity.BaseTimeEntity;
-import com.example.shopping.domain.enums.*;
+import com.example.shopping.domain.enums.UserStatus;
+import com.example.shopping.domain.enums.JoinType;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "users")
-@Getter
+@Table(name = "users", indexes = {
+    @Index(name = "idx_users", columnList = "email")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Builder
 public class User extends BaseTimeEntity {
 
