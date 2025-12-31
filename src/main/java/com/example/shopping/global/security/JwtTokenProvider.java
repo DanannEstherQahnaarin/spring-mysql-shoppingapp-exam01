@@ -16,8 +16,8 @@ public class JwtTokenProvider {
     private final long tokenValidityInMilliseconds;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secret,
-                            @Value("${jwt.expiration}") long tokenValidityInMilliseconds) {
-        byte[] keyBytes = Decoders.BASE64.decode(java.util.Base64.getEncoder().encodeToString(secret.getBytes()));
+            @Value("${jwt.access-token-expiration}") long tokenValidityInMilliseconds) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.tokenValidityInMilliseconds = tokenValidityInMilliseconds;
     }
@@ -51,5 +51,5 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
-    }    
+    }
 }
