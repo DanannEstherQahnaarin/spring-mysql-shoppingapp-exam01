@@ -12,6 +12,18 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+	sourceCompatibility = '21'
+}
+
+// QueryDSL Q클래스 생성 경로 설정
+def querydslDir = "$buildDir/generated/sources/annotationProcessor/java/main"
+
+sourceSets {
+	main.java.srcDirs += [querydslDir]
+}
+
+clean {
+	delete file(querydslDir)
 }
 
 configurations {
