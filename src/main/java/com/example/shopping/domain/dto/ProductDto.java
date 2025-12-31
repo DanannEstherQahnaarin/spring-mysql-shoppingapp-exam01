@@ -126,5 +126,14 @@ public class ProductDto {
         
         /** 재고 수량 */
         private Integer stock;
+        
+        /** QueryDSL Projections.constructor()를 위한 생성자 */
+        public Response(Long productId, String categoryName, String name, Integer price, Integer stock) {
+            this.productId = productId;
+            this.categoryName = categoryName;
+            this.name = name;
+            this.price = price;
+            this.stock = stock;
+        }
     }
 }

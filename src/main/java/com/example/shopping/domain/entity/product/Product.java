@@ -1,5 +1,7 @@
 package com.example.shopping.domain.entity.product;
 
+import com.example.shopping.domain.exception.BusinessException;
+import com.example.shopping.domain.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -94,8 +96,7 @@ public class Product {
     public void removeStock(int quantity) {
         int restStock = this.stock - quantity;
         if (restStock < 0) {
-            // TODO: 적절한 예외 클래스로 변경 (예: InsufficientStockException)
-            throw new RuntimeException("재고가 부족합니다.");
+            throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK);
         }
         this.stock = restStock;
     }

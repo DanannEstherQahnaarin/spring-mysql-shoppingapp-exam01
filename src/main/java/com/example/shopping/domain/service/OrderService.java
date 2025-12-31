@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.shopping.domain.dto.OrderDto;
+import com.example.shopping.domain.exception.BusinessException;
+import com.example.shopping.domain.exception.ErrorCode;
 import com.example.shopping.domain.entity.order.Cart;
 import com.example.shopping.domain.entity.order.CartItem;
 import com.example.shopping.domain.entity.order.OrderItem;
@@ -101,7 +103,7 @@ public class OrderService {
                 .orElseGet(() -> cartRepository.save(Cart.builder().userId(userId).build()));
 
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // 2. 이미 장바구니에 있는 상품인지 확인
         CartItem cartItem = cartItemRepository
@@ -203,11 +205,11 @@ public class OrderService {
     public Long createOrder(Long userId) {
         // 1. 장바구니 조회
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("장바구니가 비어있습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CART_EMPTY));
 
         List<CartItem> cartItems = cartItemRepository.findAllByCart_CartId(cart.getCartId());
         if (cartItems.isEmpty()) {
-            throw new RuntimeException("주문할 상품이 없습니다.");
+            throw new BusinessException(ErrorCode.NO_ITEMS_TO_ORDER);
         }
 
         // 2. 주문 생성

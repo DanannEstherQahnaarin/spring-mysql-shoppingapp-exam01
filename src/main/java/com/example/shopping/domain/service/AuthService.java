@@ -3,6 +3,8 @@ package com.example.shopping.domain.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.shopping.domain.dto.AuthDto;
+import com.example.shopping.domain.exception.BusinessException;
+import com.example.shopping.domain.exception.ErrorCode;
 import com.example.shopping.domain.entity.user.User;
 import com.example.shopping.domain.entity.user.UserAuth;
 import com.example.shopping.domain.entity.user.UserProfile;
@@ -87,11 +89,11 @@ public class AuthService {
     @Transactional
     public Long signUp(AuthDto.SignupRequest request) {
         if (userRepository.existsByLoginId(request.getLoginId())) {
-
+            throw new BusinessException(ErrorCode.DUPLICATE_LOGIN_ID);
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
         User user = User.builder()
@@ -150,11 +152,13 @@ public class AuthService {
      */
     @Transactional
     public AuthDto.TokenResponse login(AuthDto.LoginRequest request) {
-        User user = userRepository.findByLoginId(request.getLoginId()).orElseThrow();
-        UserAuth uAuth = userAuthRepository.findById(user.getUserId()).orElseThrow();
+        User user = userRepository.findByLoginId(request.getLoginId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        UserAuth uAuth = userAuthRepository.findById(user.getUserId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), uAuth.getPasswordHash())) {
-
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
 
         user.updateLastLogin();

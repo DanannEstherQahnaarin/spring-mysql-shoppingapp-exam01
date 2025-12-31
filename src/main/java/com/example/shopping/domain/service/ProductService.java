@@ -3,6 +3,8 @@ package com.example.shopping.domain.service;
 import org.springframework.stereotype.Service;
 
 import com.example.shopping.domain.dto.ProductDto;
+import com.example.shopping.domain.exception.BusinessException;
+import com.example.shopping.domain.exception.ErrorCode;
 import com.example.shopping.domain.entity.product.Category;
 import com.example.shopping.domain.entity.product.Product;
 import com.example.shopping.domain.repository.CategoryRepository;
@@ -93,7 +95,7 @@ public class ProductService {
     @Transactional
     public Long createProduct(ProductDto.CreateProduct request) {
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Product product = Product.builder()
                 .category(category)
