@@ -3,7 +3,9 @@ package com.example.shopping.domain.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 상품 관련 DTO 클래스
@@ -111,6 +113,8 @@ public class ProductDto {
      * </pre>
      */
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Response {
         /** 상품 고유 ID */
         private Long productId;
@@ -126,14 +130,31 @@ public class ProductDto {
         
         /** 재고 수량 */
         private Integer stock;
-        
-        /** QueryDSL Projections.constructor()를 위한 생성자 */
-        public Response(Long productId, String categoryName, String name, Integer price, Integer stock) {
-            this.productId = productId;
-            this.categoryName = categoryName;
-            this.name = name;
-            this.price = price;
-            this.stock = stock;
-        }
     }
+
+    @Data
+    public static class UpdateProduct {
+        private Long categoryId; // 카테고리 변경 가능
+        @NotBlank
+        private String name;
+        @NotNull @Min(0)
+        private Integer price;
+        @NotNull @Min(0)
+        private Integer stock;
+    }
+
+    // 카테고리 수정 요청
+    @Data
+    public static class UpdateCategory {
+        @NotBlank
+        private String name;
+    }
+    
+    // 카테고리 응답
+    @Data
+    @AllArgsConstructor
+    public static class CategoryResponse {
+        private Long categoryId;
+        private String name;
+    }    
 }

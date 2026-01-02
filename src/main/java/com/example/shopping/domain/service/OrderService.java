@@ -358,8 +358,10 @@ public class OrderService {
     public void cancelOrder(Long userId, Long orderId) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
-        if (!order.getUserId().equals(userId)) throw new BusinessException(ErrorCode.NOT_HAVE_PERMISSION);
-        if ("cancel".equals(order.getStatus())) throw new BusinessException(ErrorCode.ORDER_ALREADY_CANCELLED);
+        if (!order.getUserId().equals(userId))
+            throw new BusinessException(ErrorCode.NOT_HAVE_PERMISSION);
+        if ("cancel".equals(order.getStatus()))
+            throw new BusinessException(ErrorCode.ORDER_ALREADY_CANCELLED);
 
         order.cancel(); // 상태 변경
 
@@ -367,25 +369,38 @@ public class OrderService {
         // (FetchJoin이 안 된 상태라면 LazyLoading 발생. 성능 중요시 findOrderDetail 사용 권장)
         List<OrderItem> items = orderItemRepository.findAll(); // *최적화 필요: findAllByOrder_OrderId(orderId)
         for (OrderItem item : items) {
-            if(item.getOrder().getOrderId().equals(orderId)) {
+            if (item.getOrder().getOrderId().equals(orderId)) {
                 item.getProduct().addStock(item.getQty());
             }
         }
     }
 
-    // 주문 상태 변경 (관리자 전용)
+
     @Transactional
-    public void updateOrderStatus(Long userId, Long orderId, String status) {
+    public void clearCart(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CART_EMPTY));
+
+        // 소유자 검증 (Service 내부 로직이므로 생략 가능하나 안전하게)
+        if (!cart.getUserId().equals(userId))
+            throw new BusinessException(ErrorCode.NOT_HAVE_PERMISSION);
+
+        cartItemRepository.deleteAllByCart_CartId(cart.getCartId());
+    }
+
+    // 주문 상태 및 배송 정보 변경 (관리자)
+    @Transactional
+    public void updateOrderStatus(Long userId, Long orderId, OrderDto.UpdateStatus request) {
         // 1. 관리자 권한 체크 (QueryDSL)
         if (!userRepository.isAdmin(userId)) {
             throw new BusinessException(ErrorCode.ADMIN_PERMISSION_REQUIRED);
         }
 
-        // 2. 주문 조회 및 상태 변경
+        // 2. 주문 조회 및 상태/배송 정보 변경
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
-        
-        order.updateStatus(status);
+
+        order.updateDeliveryInfo(request.getStatus(), request.getCarrier(), request.getTrackingNumber());
     }
 
     private void validateCartOwner(Long userId, CartItem cartItem) {

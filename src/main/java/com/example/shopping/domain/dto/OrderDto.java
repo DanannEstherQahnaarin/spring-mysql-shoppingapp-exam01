@@ -122,6 +122,8 @@ public class OrderDto {
     @Data
     public static class UpdateStatus {
         @NotBlank
-        private String status; // delivery, delivered, cancel 등
+        private String status;
+        private String carrier;       // 택배사 (선택)
+        private String trackingNumber; // 운송장 번호 (선택)
     }
 }

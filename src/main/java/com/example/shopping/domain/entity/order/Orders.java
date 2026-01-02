@@ -79,6 +79,18 @@ public class Orders extends BaseTimeEntity {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Column(name = "tracking_number")
+    private String trackingNumber;
+
+    @Column(length = 50)
+    private String carrier;
+
+    public void updateDeliveryInfo(String status, String carrier, String trackingNumber) {
+        this.status = status;
+        if (carrier != null) this.carrier = carrier;
+        if (trackingNumber != null) this.trackingNumber = trackingNumber;
+    }
+
     /**
      * 주문 시간
      * 주문이 생성된 시간입니다.

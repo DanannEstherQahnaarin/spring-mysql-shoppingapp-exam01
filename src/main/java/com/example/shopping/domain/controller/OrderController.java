@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -240,8 +241,7 @@ public class OrderController {
 
     // 주문 상세 조회
     @GetMapping("/{orderId}/detail")
-    public ResponseEntity<OrderDto.OrderDetailResponse> getOrderDetail(
-            @RequestHeader("Authorization") String token,
+    public ResponseEntity<OrderDto.OrderDetailResponse> getOrderDetail(@RequestHeader("Authorization") String token,
             @PathVariable Long orderId) {
         Long userId = getUserId(token);
         return ResponseEntity.ok(orderService.getOrderDetail(userId, orderId));
@@ -249,11 +249,28 @@ public class OrderController {
 
     // 주문 취소
     @PostMapping("/{orderId}/cancel")
-    public ResponseEntity<String> cancelOrder(
-            @RequestHeader("Authorization") String token,
+    public ResponseEntity<String> cancelOrder(@RequestHeader("Authorization") String token,
             @PathVariable Long orderId) {
         Long userId = getUserId(token);
         orderService.cancelOrder(userId, orderId);
         return ResponseEntity.ok("주문이 취소되었습니다.");
+    }
+
+    // 장바구니 전체 비우기
+    @DeleteMapping("/cart/clear")
+    public ResponseEntity<String> clearCart(@RequestHeader("Authorization") String token) {
+        Long userId = getUserId(token);
+        orderService.clearCart(userId);
+        return ResponseEntity.ok("장바구니를 비웠습니다.");
+    }
+
+    // 주문 상태 및 배송 정보 변경 (관리자)
+    @PatchMapping("/{orderId}/status")
+    public ResponseEntity<String> updateOrderStatus(@RequestHeader("Authorization") String token,
+            @PathVariable Long orderId, @RequestBody OrderDto.UpdateStatus request) {
+        Long userId = getUserId(token);
+        // Service 메서드 시그니처 변경에 맞춰 호출 (dto 전체 전달)
+        orderService.updateOrderStatus(userId, orderId, request);
+        return ResponseEntity.ok("주문 상태가 변경되었습니다.");
     }
 }

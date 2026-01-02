@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.shopping.SpringMysqlShppingExample01ApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-01-02T04:55:30.434Z" hostname="DESKTOP-6B97KBM" time="0.231">
+<testsuite name="com.example.shopping.SpringMysqlShppingExample01ApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-01-02T06:40:26.276Z" hostname="DESKTOP-6B97KBM" time="0.226">
   <properties/>
-  <testcase name="contextLoads()" classname="com.example.shopping.SpringMysqlShppingExample01ApplicationTests" time="0.231"/>
-  <system-out><![CDATA[13:55:26.610 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.shopping.SpringMysqlShppingExample01ApplicationTests]: SpringMysqlShppingExample01ApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-13:55:26.685 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.shopping.SpringMysqlShppingExample01Application for test class com.example.shopping.SpringMysqlShppingExample01ApplicationTests
+  <testcase name="contextLoads()" classname="com.example.shopping.SpringMysqlShppingExample01ApplicationTests" time="0.226"/>
+  <system-out><![CDATA[15:40:22.457 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.shopping.SpringMysqlShppingExample01ApplicationTests]: SpringMysqlShppingExample01ApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+15:40:22.542 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.shopping.SpringMysqlShppingExample01Application for test class com.example.shopping.SpringMysqlShppingExample01ApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,18 +14,18 @@
 
  :: Spring Boot ::                (v4.0.1)
 
-2026-01-02T13:55:27.002+09:00  INFO 465728 --- [shopping-server] [    Test worker] ingMysqlShppingExample01ApplicationTests : Starting SpringMysqlShppingExample01ApplicationTests using Java 21 with PID 465728 (started by G in C:\workspace\spring_lab\spring-mysql-shpping-example01)
-2026-01-02T13:55:27.002+09:00  INFO 465728 --- [shopping-server] [    Test worker] ingMysqlShppingExample01ApplicationTests : No active profile set, falling back to 1 default profile: "default"
-2026-01-02T13:55:27.559+09:00  INFO 465728 --- [shopping-server] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-01-02T13:55:27.616+09:00  INFO 465728 --- [shopping-server] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 50 ms. Found 9 JPA repository interfaces.
-2026-01-02T13:55:28.180+09:00  INFO 465728 --- [shopping-server] [    Test worker] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-01-02T13:55:28.237+09:00  INFO 465728 --- [shopping-server] [    Test worker] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.0.Final
-2026-01-02T13:55:28.608+09:00  INFO 465728 --- [shopping-server] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-01-02T13:55:28.628+09:00  INFO 465728 --- [shopping-server] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-01-02T13:55:28.721+09:00  INFO 465728 --- [shopping-server] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@23aaa756
-2026-01-02T13:55:28.721+09:00  INFO 465728 --- [shopping-server] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-01-02T13:55:28.765+09:00  WARN 465728 --- [shopping-server] [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-01-02T13:55:28.777+09:00  INFO 465728 --- [shopping-server] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-01-02T15:40:22.869+09:00  INFO 127648 --- [shopping-server] [    Test worker] ingMysqlShppingExample01ApplicationTests : Starting SpringMysqlShppingExample01ApplicationTests using Java 21 with PID 127648 (started by G in C:\workspace\spring_lab\spring-mysql-shpping-example01)
+2026-01-02T15:40:22.870+09:00  INFO 127648 --- [shopping-server] [    Test worker] ingMysqlShppingExample01ApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2026-01-02T15:40:23.440+09:00  INFO 127648 --- [shopping-server] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-02T15:40:23.503+09:00  INFO 127648 --- [shopping-server] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 50 ms. Found 9 JPA repository interfaces.
+2026-01-02T15:40:24.062+09:00  INFO 127648 --- [shopping-server] [    Test worker] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-01-02T15:40:24.099+09:00  INFO 127648 --- [shopping-server] [    Test worker] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.0.Final
+2026-01-02T15:40:24.392+09:00  INFO 127648 --- [shopping-server] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-02T15:40:24.413+09:00  INFO 127648 --- [shopping-server] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-02T15:40:24.509+09:00  INFO 127648 --- [shopping-server] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@39a2e77d
+2026-01-02T15:40:24.511+09:00  INFO 127648 --- [shopping-server] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-02T15:40:24.541+09:00  WARN 127648 --- [shopping-server] [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-02T15:40:24.550+09:00  INFO 127648 --- [shopping-server] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [jdbc:mysql://localhost:3306/shopping?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul]
 	Database driver: MySQL Connector/J
 	Database dialect: MySQLDialect
@@ -37,12 +37,12 @@
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-01-02T13:55:29.534+09:00  INFO 465728 --- [shopping-server] [    Test worker] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-01-02T13:55:29.554+09:00  INFO 465728 --- [shopping-server] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-01-02T13:55:29.612+09:00  INFO 465728 --- [shopping-server] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-01-02T13:55:29.986+09:00  INFO 465728 --- [shopping-server] [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-01-02T13:55:30.131+09:00 DEBUG 465728 --- [shopping-server] [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
-2026-01-02T13:55:30.426+09:00  INFO 465728 --- [shopping-server] [    Test worker] ingMysqlShppingExample01ApplicationTests : Started SpringMysqlShppingExample01ApplicationTests in 3.643 seconds (process running for 4.555)
+2026-01-02T15:40:25.295+09:00  INFO 127648 --- [shopping-server] [    Test worker] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-02T15:40:25.295+09:00  INFO 127648 --- [shopping-server] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-02T15:40:25.362+09:00  INFO 127648 --- [shopping-server] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-02T15:40:25.733+09:00  INFO 127648 --- [shopping-server] [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-01-02T15:40:25.894+09:00 DEBUG 127648 --- [shopping-server] [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-01-02T15:40:26.267+09:00  INFO 127648 --- [shopping-server] [    Test worker] ingMysqlShppingExample01ApplicationTests : Started SpringMysqlShppingExample01ApplicationTests in 3.619 seconds (process running for 4.528)
 ]]></system-out>
   <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
 WARNING: A Java agent has been loaded dynamically (C:\Users\G\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.17.8\f09415827a71be7ed621c7bd02550678f28bc81c\byte-buddy-agent-1.17.8.jar)

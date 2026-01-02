@@ -58,4 +58,8 @@ public class Category {
      */
     @Column(unique = true, nullable = false, length = 30)
     private String name;
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

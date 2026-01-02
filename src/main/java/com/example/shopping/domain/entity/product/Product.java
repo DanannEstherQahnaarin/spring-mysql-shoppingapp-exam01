@@ -104,4 +104,13 @@ public class Product {
     public void addStock(int quantity) {
         this.stock += quantity;
     }
+
+    public void updateInfo(Category category, String name, Integer price, Integer stock) {
+        this.category = category;
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+    }
+
+
 }

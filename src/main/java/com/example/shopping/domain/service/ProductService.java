@@ -1,5 +1,8 @@
 package com.example.shopping.domain.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.example.shopping.domain.dto.ProductDto;
@@ -129,5 +132,74 @@ public class ProductService {
     @Transactional(readOnly = true)
     public java.util.List<ProductDto.Response> getProductList() {
         return productRepository.findAllProducts();
+    }
+
+    // 상품 상세 조회
+    @Transactional(readOnly = true)
+    public ProductDto.Response getProductDetail(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        ProductDto.Response res = new ProductDto.Response();
+        
+        res.setProductId(product.getProductId());
+        res.setCategoryName(product.getCategory().getName());
+        res.setName(product.getName());
+        res.setPrice(product.getPrice());
+        res.setStock(product.getStock());
+        return res;
+    }
+
+    // 상품 수정 (관리자)
+    @Transactional
+    public void updateProduct(Long productId, ProductDto.UpdateProduct request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        // Dirty Checking을 이용한 업데이트 (Setter 또는 별도 메서드 필요)
+        // 편의상 Setter 사용 혹은 엔티티에 update 메서드 추가 권장
+        // product.updateInfo(category, request.getName(), request.getPrice(), request.getStock()); 
+        // 여기서는 Builder 패턴 사용이 불가능하므로 엔티티에 메서드 추가 필요 *아래 2-1 참고
+        product.updateInfo(category, request.getName(), request.getPrice(), request.getStock());
+    }
+
+    // 상품 삭제 (관리자)
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+        productRepository.delete(product);
+    }
+
+    // =========================================================
+    // 카테고리 관리 (Category)
+    // =========================================================
+
+    // 카테고리 목록 조회
+    @Transactional(readOnly = true)
+    public List<ProductDto.CategoryResponse> getCategoryList() {
+        return categoryRepository.findAll().stream()
+                .map(c -> new ProductDto.CategoryResponse(c.getCategoryId(), c.getName()))
+                .collect(Collectors.toList());
+    }
+
+    // 카테고리 수정
+    @Transactional
+    public void updateCategory(Long categoryId, ProductDto.UpdateCategory request) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+        category.updateName(request.getName());
+    }
+
+    // 카테고리 삭제
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+        // 상품이 연결된 경우 삭제 방지 로직 필요하나 여기선 생략
+        categoryRepository.delete(category);
     }
 }

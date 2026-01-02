@@ -10,6 +10,7 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 실무에서 빈번하게 요구되는 서버 사이드 요구사항을 중심으로 구현되었습니다.
 
 주요 목적:
+
 - **RESTful API 설계 원칙** 이해 및 적용
 - **JWT 기반 인증/인가** 구현을 통한 보안 학습
 - **Spring Data JPA와 QueryDSL**을 활용한 효율적인 데이터 접근
@@ -19,21 +20,33 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 ## 주요 기능
 
 ### 1. 인증/인가 (Authentication & Authorization)
+
 - 회원가입: 사용자 정보, 프로필, 인증 정보 저장
 - 로그인: JWT 토큰 기반 인증
 - JWT 토큰 발급 및 검증
 
 ### 2. 상품 관리 (Product Management)
-- 카테고리 등록
-- 상품 등록 (카테고리 연동, 가격, 재고 관리)
-- 상품 목록 조회 (QueryDSL 기반 동적 쿼리)
+
+- **카테고리 관리**
+  - 카테고리 등록: 새로운 상품 카테고리 생성
+  - 카테고리 목록 조회: 모든 카테고리 목록 조회
+  - 카테고리 수정: 카테고리 이름 변경
+  - 카테고리 삭제: 카테고리 제거
+- **상품 관리**
+  - 상품 등록: 카테고리 연동, 가격, 재고 관리
+  - 상품 목록 조회: QueryDSL 기반 동적 쿼리
+  - 상품 상세 조회: 특정 상품의 상세 정보 조회
+  - 상품 수정: 상품 정보 변경 (관리자)
+  - 상품 삭제: 상품 제거 (관리자)
 
 ### 3. 주문 관리 (Order Management)
+
 - **장바구니 관리**
   - 장바구니 담기: 상품을 장바구니에 추가 (중복 시 수량 증가)
   - 장바구니 조회: 현재 사용자의 장바구니 항목 조회
   - 장바구니 항목 수량 변경: 장바구니에 담긴 상품의 수량 수정
   - 장바구니 항목 삭제: 장바구니에서 특정 상품 제거
+  - 장바구니 전체 비우기: 사용자의 모든 장바구니 항목 삭제
 - **주문 처리**
   - 주문하기: 장바구니의 모든 상품을 주문 처리
     - 재고 차감 (트랜잭션 보장)
@@ -44,9 +57,11 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
   - 주문 상세 조회: 특정 주문의 상세 정보 조회 (`GET /api/orders/{orderId}/detail`)
   - 주문 취소: 주문 취소 및 재고 복구 (`POST /api/orders/{orderId}/cancel`)
 - **주문 상태 관리**
-  - 주문 상태 변경: 관리자 권한으로 주문 상태 변경 (서비스 레이어 구현 완료, API 엔드포인트 추가 필요)
+  - 주문 상태 변경: 관리자 권한으로 주문 상태 변경 (`PATCH /api/orders/{orderId}/status`)
+  - 배송 정보 관리: 택배사, 운송장 번호 등 배송 정보 업데이트
 
 ### 4. 통합 예외 처리 (Exception Handling)
+
 - 전역 예외 처리: `@RestControllerAdvice`를 활용한 일관된 에러 응답
 - 에러 코드 관리: `ErrorCode` enum을 통한 중앙화된 에러 코드 및 메시지 관리
 - 커스텀 예외: `BusinessException`을 통한 비즈니스 로직 예외 처리
@@ -54,7 +69,7 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 
 ### 서비스 흐름
 
-```
+```text
 1. 회원가입 → 로그인 → JWT 토큰 발급
 2. 상품 조회 (인증 필요)
 3. 장바구니 담기 → 장바구니 조회 → 주문하기
@@ -64,6 +79,7 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 ## 기술 스택
 
 ### Backend
+
 - **Java 21**: 최신 Java LTS 버전
 - **Spring Boot 4.0.1**: 웹 애플리케이션 프레임워크
 - **Spring Data JPA**: 데이터 접근 계층
@@ -71,19 +87,23 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 - **QueryDSL 5.0.0**: 타입 안전한 동적 쿼리 작성
 
 ### Database
+
 - **MySQL**: 관계형 데이터베이스
 
 ### Build & Tools
+
 - **Gradle**: 빌드 도구
 - **Lombok**: 보일러플레이트 코드 제거
 
 ### Security
+
 - **JWT (jjwt 0.11.5)**: 토큰 기반 인증
 
 ## 아키텍처
 
 ### 계층 구조
-```
+
+```text
 Controller (REST API 엔드포인트)
     ↓
 Service (비즈니스 로직, 트랜잭션 관리)
@@ -94,7 +114,8 @@ Entity (도메인 모델)
 ```
 
 ### 패키지 구조
-```
+
+```text
 com.example.shopping
 ├── domain/                    # 도메인 계층
 │   ├── controller/           # REST 컨트롤러
@@ -117,6 +138,7 @@ com.example.shopping
 ```
 
 ### 주요 설계 패턴
+
 - **Repository Pattern**: 데이터 접근 로직 캡슐화
 - **DTO Pattern**: 계층 간 데이터 전송
 - **Builder Pattern**: 엔티티 생성 (Lombok 활용)
@@ -126,6 +148,7 @@ com.example.shopping
 ## 실행 방법
 
 ### 사전 요구사항
+
 - Java 21 이상
 - MySQL 8.0 이상
 - Gradle (또는 Gradle Wrapper 사용)
@@ -134,12 +157,14 @@ com.example.shopping
 
 1. **데이터베이스 설정**
    - MySQL 실행 및 데이터베이스 생성
+  
    ```sql
    CREATE DATABASE shopping CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
 2. **애플리케이션 설정**
    - `src/main/resources/application.yml` 파일에서 데이터베이스 연결 정보 확인
+  
    ```yaml
    spring:
      datasource:
@@ -149,6 +174,7 @@ com.example.shopping
    ```
 
 3. **애플리케이션 실행**
+
    ```bash
    # Gradle Wrapper 사용
    ./gradlew bootRun
@@ -166,6 +192,7 @@ com.example.shopping
 Docker Compose를 사용한 실행 예시:
 
 1. **docker-compose.yml** 파일 생성 (프로젝트 루트)
+
    ```yaml
    version: '3.8'
    services:
@@ -199,6 +226,7 @@ Docker Compose를 사용한 실행 예시:
    ```
 
 2. **Dockerfile** 파일 생성 (프로젝트 루트)
+
    ```dockerfile
    FROM openjdk:21-jdk-slim
    WORKDIR /app
@@ -208,6 +236,7 @@ Docker Compose를 사용한 실행 예시:
    ```
 
 3. **실행**
+
    ```bash
    # 애플리케이션 빌드
    ./gradlew build
@@ -219,23 +248,34 @@ Docker Compose를 사용한 실행 예시:
 ## API 엔드포인트
 
 ### 인증 (Authentication)
+
 - `POST /api/auth/signup` - 회원가입
 - `POST /api/auth/login` - 로그인
 
 ### 상품 (Product)
+
 - `POST /api/products/category/add` - 카테고리 등록
+- `GET /api/products/categories` - 카테고리 목록 조회
+- `PUT /api/products/category/{categoryId}` - 카테고리 수정
+- `DELETE /api/products/category/{categoryId}` - 카테고리 삭제
 - `POST /api/products/add` - 상품 등록
 - `GET /api/products/list` - 상품 목록 조회
+- `GET /api/products/{productId}` - 상품 상세 조회
+- `PUT /api/products/{productId}` - 상품 수정 (관리자)
+- `DELETE /api/products/{productId}` - 상품 삭제 (관리자)
 
 ### 주문 (Order)
+
 - `POST /api/orders/cart/add` - 장바구니 담기 (인증 필요)
 - `GET /api/orders/cart` - 장바구니 조회 (인증 필요)
 - `PUT /api/orders/cart/update/{cartItemId}` - 장바구니 항목 수량 변경 (인증 필요)
 - `DELETE /api/orders/cart/delete/{cartItemId}` - 장바구니 항목 삭제 (인증 필요)
+- `DELETE /api/orders/cart/clear` - 장바구니 전체 비우기 (인증 필요)
 - `POST /api/orders/create` - 주문하기 (인증 필요)
 - `GET /api/orders/list` - 주문 내역 조회 (인증 필요)
 - `GET /api/orders/{orderId}/detail` - 주문 상세 조회 (인증 필요)
 - `POST /api/orders/{orderId}/cancel` - 주문 취소 (인증 필요)
+- `PATCH /api/orders/{orderId}/status` - 주문 상태 및 배송 정보 변경 (관리자, 인증 필요)
 
 ## 예외 처리 (Exception Handling)
 
@@ -244,6 +284,7 @@ Docker Compose를 사용한 실행 예시:
 ### 구조
 
 #### 1. ErrorCode (에러 코드 Enum)
+
 모든 예외 상황에 대한 에러 코드, HTTP 상태 코드, 메시지를 중앙에서 관리합니다.
 
 ```java
@@ -263,6 +304,7 @@ public enum ErrorCode {
 ```
 
 #### 2. BusinessException (커스텀 예외)
+
 비즈니스 로직에서 발생하는 예외를 나타내는 커스텀 예외 클래스입니다.
 
 ```java
@@ -271,6 +313,7 @@ throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 ```
 
 #### 3. ErrorResponse (에러 응답 DTO)
+
 클라이언트에게 반환되는 표준화된 에러 응답 형식입니다.
 
 ```json
@@ -282,6 +325,7 @@ throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 ```
 
 #### 4. GlobalExceptionHandler (전역 예외 처리)
+
 `@RestControllerAdvice`를 사용하여 모든 컨트롤러에서 발생하는 예외를 일관되게 처리합니다.
 
 ### 에러 코드 분류
@@ -325,23 +369,25 @@ HTTP 400 Bad Request
 
 ### 1. 인증/인가 기능 확장
 
-#### 현재 구현
+#### 인증/인가 현재 구현
+
 - ✅ 회원가입
 - ✅ 로그인 (JWT 토큰 발급)
 
-#### 추가 가능한 기능
+#### 인증/인가 추가 가능한 기능
+
 - **토큰 관리**
   - 토큰 갱신 (Refresh Token)
   - 토큰 만료 처리
   - 로그아웃 (토큰 무효화)
-  
+
 - **사용자 계정 관리**
   - 비밀번호 변경
   - 비밀번호 찾기 (이메일 인증)
   - 회원 정보 수정
   - 회원 탈퇴
   - 프로필 조회/수정
-  
+
 - **소셜 로그인**
   - 카카오 로그인 연동
   - 네이버 로그인 연동
@@ -349,32 +395,33 @@ HTTP 400 Bad Request
 
 ### 2. 상품 관리 기능 확장
 
-#### 현재 구현
-- ✅ 카테고리 등록
-- ✅ 상품 등록
-- ✅ 상품 목록 조회
+#### 상품 관리 현재 구현
 
-#### 추가 가능한 기능
-- **상품 CRUD 확장**
-  - 상품 상세 조회 (`GET /api/products/{id}`)
-  - 상품 수정 (`PUT /api/products/{id}`)
-  - 상품 삭제 (`DELETE /api/products/{id}`)
-  - 카테고리 목록 조회
-  - 카테고리 수정/삭제
-  
+- ✅ 카테고리 등록 (`POST /api/products/category/add`)
+- ✅ 카테고리 목록 조회 (`GET /api/products/categories`)
+- ✅ 카테고리 수정 (`PUT /api/products/category/{categoryId}`)
+- ✅ 카테고리 삭제 (`DELETE /api/products/category/{categoryId}`)
+- ✅ 상품 등록 (`POST /api/products/add`)
+- ✅ 상품 목록 조회 (`GET /api/products/list`)
+- ✅ 상품 상세 조회 (`GET /api/products/{productId}`)
+- ✅ 상품 수정 (`PUT /api/products/{productId}`)
+- ✅ 상품 삭제 (`DELETE /api/products/{productId}`)
+
+#### 상품 관리 추가 가능한 기능
+
 - **상품 검색 및 필터링**
   - 상품명 검색
   - 카테고리별 필터링
   - 가격 범위 필터링
   - 재고 여부 필터링
   - 정렬 옵션 (가격, 이름, 등록일 등)
-  
+
 - **상품 이미지 관리**
   - 상품 이미지 업로드
   - 이미지 다중 업로드
   - 이미지 삭제
   - 이미지 URL 관리
-  
+
 - **상품 관리 고급 기능**
   - 상품 할인/프로모션
   - 상품 상태 관리 (판매중, 품절, 판매중지)
@@ -383,34 +430,32 @@ HTTP 400 Bad Request
 
 ### 3. 주문 관리 기능 확장
 
-#### 현재 구현
+#### 주문 관리 현재 구현
+
 - ✅ 장바구니 담기 (`POST /api/orders/cart/add`)
 - ✅ 장바구니 조회 (`GET /api/orders/cart`)
 - ✅ 장바구니 항목 수량 변경 (`PUT /api/orders/cart/update/{cartItemId}`)
 - ✅ 장바구니 항목 삭제 (`DELETE /api/orders/cart/delete/{cartItemId}`)
+- ✅ 장바구니 전체 비우기 (`DELETE /api/orders/cart/clear`)
 - ✅ 주문하기 (`POST /api/orders/create`)
 - ✅ 주문 내역 조회 (`GET /api/orders/list`)
 - ✅ 주문 상세 조회 (`GET /api/orders/{orderId}/detail`)
 - ✅ 주문 취소 (`POST /api/orders/{orderId}/cancel`, 재고 복구 포함)
-- ✅ 주문 상태 변경 (관리자, 서비스 레이어 구현 완료, API 엔드포인트 추가 필요)
+- ✅ 주문 상태 변경 (`PATCH /api/orders/{orderId}/status`, 관리자)
+- ✅ 배송 정보 관리 (택배사, 운송장 번호)
 
-#### 추가 가능한 기능
-- **장바구니 관리**
-  - 장바구니 전체 비우기
-  
-- **주문 상태 관리**
-  - 주문 상태 변경 API 엔드포인트 추가 (관리자)
-  - 배송 정보 관리
+#### 주문 관리 추가 가능한 기능
 
 ### 4. 리뷰 및 평점 시스템
 
-#### 추가 가능한 기능
+#### 리뷰 및 평점 추가 가능한 기능
+
 - **리뷰 관리**
   - 상품 리뷰 작성 (`POST /api/reviews`)
   - 리뷰 조회 (상품별, 사용자별)
   - 리뷰 수정/삭제
   - 리뷰 좋아요/도움됨 기능
-  
+
 - **평점 시스템**
   - 평점 등록 (1~5점)
   - 평균 평점 계산
@@ -418,13 +463,14 @@ HTTP 400 Bad Request
 
 ### 5. 결제 시스템
 
-#### 추가 가능한 기능
+#### 결제 시스템 추가 가능한 기능
+
 - **결제 연동**
   - 결제 수단 선택 (카드, 계좌이체, 간편결제)
   - 결제 API 연동 (PG사 연동)
   - 결제 내역 저장
   - 결제 취소/환불 처리
-  
+
 - **주문-결제 연동**
   - 주문 생성 후 결제 프로세스
   - 결제 완료 후 주문 확정
@@ -432,17 +478,18 @@ HTTP 400 Bad Request
 
 ### 6. 관리자 기능
 
-#### 추가 가능한 기능
+#### 관리자 기능 추가 가능한 기능
+
 - **관리자 인증**
   - 관리자 로그인
   - 관리자 권한 관리 (ROLE_ADMIN)
-  
+
 - **대시보드**
   - 매출 통계
   - 주문 통계
   - 상품 통계
   - 사용자 통계
-  
+
 - **관리 기능**
   - 사용자 관리 (조회, 수정, 삭제)
   - 주문 관리 (상태 변경, 취소)
@@ -451,13 +498,14 @@ HTTP 400 Bad Request
 
 ### 7. 알림 시스템
 
-#### 추가 가능한 기능
+#### 알림 시스템 추가 가능한 기능
+
 - **알림 관리**
   - 주문 완료 알림
   - 배송 시작 알림
   - 재고 부족 알림
   - 프로모션 알림
-  
+
 - **알림 전송**
   - 이메일 알림
   - SMS 알림 (선택)
@@ -465,29 +513,31 @@ HTTP 400 Bad Request
 
 ### 8. 성능 최적화
 
-#### 추가 가능한 기능
+#### 성능 최적화 추가 가능한 기능
+
 - **캐싱**
   - Redis를 활용한 상품 목록 캐싱
   - 카테고리 목록 캐싱
   - 인기 상품 캐싱
-  
+
 - **페이지네이션**
   - 상품 목록 페이지네이션
   - 주문 내역 페이지네이션
   - 리뷰 목록 페이지네이션
-  
+
 - **검색 최적화**
   - Elasticsearch 연동 (전문 검색)
   - 검색 결과 하이라이팅
 
 ### 9. 보안 강화
 
-#### 추가 가능한 기능
+#### 보안 강화 추가 가능한 기능
+
 - **인증 보안**
   - 로그인 시도 제한 (Rate Limiting)
   - IP 기반 접근 제한
   - 비밀번호 정책 강화
-  
+
 - **API 보안**
   - CORS 설정
   - API Rate Limiting
@@ -495,12 +545,13 @@ HTTP 400 Bad Request
 
 ### 10. 로깅 및 모니터링
 
-#### 추가 가능한 기능
+#### 로깅 및 모니터링 추가 가능한 기능
+
 - **로깅**
   - 구조화된 로깅 (JSON 형식)
   - 로그 레벨 관리
   - 에러 로그 집계
-  
+
 - **모니터링**
   - 애플리케이션 성능 모니터링 (APM)
   - 데이터베이스 쿼리 모니터링
@@ -508,26 +559,28 @@ HTTP 400 Bad Request
 
 ### 11. 테스트
 
-#### 추가 가능한 기능
+#### 테스트 추가 가능한 기능
+
 - **단위 테스트**
   - Service 계층 단위 테스트
   - Repository 계층 단위 테스트
-  
+
 - **통합 테스트**
   - API 통합 테스트
   - 데이터베이스 통합 테스트
-  
+
 - **테스트 커버리지**
   - 코드 커버리지 측정
   - 테스트 자동화
 
 ### 12. 문서화
 
-#### 추가 가능한 기능
+#### 문서화 추가 가능한 기능
+
 - **API 문서화**
   - Swagger/OpenAPI 문서 자동 생성
   - API 사용 예시 제공
-  
+
 - **코드 문서화**
   - JavaDoc 보완
   - 아키텍처 다이어그램
@@ -535,25 +588,30 @@ HTTP 400 Bad Request
 ### 구현 우선순위 제안
 
 #### Phase 1 (기본 기능 확장)
-1. 상품 상세 조회, 수정, 삭제
-2. ✅ 장바구니 수량 변경, 항목 삭제 (구현 완료)
-3. ✅ 주문 내역 조회/상세/취소 (구현 완료)
-4. 프로필 조회/수정
-5. 주문 상태 변경 API 엔드포인트 추가
+
+1. ✅ 상품 상세 조회, 수정, 삭제 (구현 완료)
+2. ✅ 카테고리 목록 조회, 수정, 삭제 (구현 완료)
+3. ✅ 장바구니 수량 변경, 항목 삭제, 전체 비우기 (구현 완료)
+4. ✅ 주문 내역 조회/상세/취소 (구현 완료)
+5. ✅ 주문 상태 변경 및 배송 정보 관리 (구현 완료)
+6. 프로필 조회/수정
 
 #### Phase 2 (사용자 경험 개선)
+
 1. 상품 검색 및 필터링
 2. 페이지네이션
 3. 상품 이미지 업로드
 4. 리뷰 및 평점 시스템
 
 #### Phase 3 (고급 기능)
+
 1. 결제 시스템 연동
 2. 관리자 기능
 3. 알림 시스템
 4. Redis 캐싱
 
 #### Phase 4 (운영 및 최적화)
+
 1. 로깅 및 모니터링
 2. 성능 최적화
 3. 보안 강화
@@ -567,7 +625,8 @@ HTTP 400 Bad Request
 
 #### 1. 데이터베이스 최적화
 
-**인덱싱 전략**
+##### 인덱싱 전략
+
 ```sql
 -- 주문 조회 최적화를 위한 복합 인덱스
 CREATE INDEX idx_orders_user_status ON orders(user_id, status);
@@ -580,12 +639,14 @@ CREATE INDEX idx_cart_items_cart_product ON cart_items(cart_id, product_id);
 CREATE INDEX idx_order_items_order ON order_items(order_id);
 ```
 
-**쿼리 최적화**
+##### 쿼리 최적화
+
 - N+1 문제 해결: `@EntityGraph`, `fetch join` 활용
 - 배치 처리: 대량 데이터 처리 시 `@BatchSize` 활용
 - 읽기 전용 쿼리: `@Transactional(readOnly = true)` 활용
 
-**연결 풀 설정**
+##### 연결 풀 설정
+
 ```yaml
 spring:
   datasource:
@@ -599,11 +660,13 @@ spring:
 
 #### 2. JPA 성능 최적화
 
-**지연 로딩 vs 즉시 로딩**
+##### 지연 로딩 vs 즉시 로딩
+
 - 기본적으로 `@OneToMany`, `@ManyToMany`는 `LAZY` 로딩
 - 필요한 경우에만 `@EntityGraph` 또는 `fetch join` 사용
 
-**캐싱 전략**
+##### 캐싱 전략
+
 ```java
 // 2차 캐시 활성화 (Hibernate)
 @Cacheable("products")
@@ -615,7 +678,8 @@ public class Product { ... }
 public List<Category> findAllCategories() { ... }
 ```
 
-**배치 처리**
+##### 배치 처리
+
 ```java
 @Modifying
 @Query("UPDATE Product p SET p.stock = p.stock - :quantity WHERE p.id = :id")
@@ -624,7 +688,8 @@ void decreaseStock(@Param("id") Long id, @Param("quantity") int quantity);
 
 #### 3. API 응답 최적화
 
-**페이지네이션**
+##### 페이지네이션
+
 ```java
 public Page<OrderDto.OrderResponse> getOrderList(Long userId, Pageable pageable) {
     return ordersRepository.findByUserId(userId, pageable)
@@ -632,7 +697,8 @@ public Page<OrderDto.OrderResponse> getOrderList(Long userId, Pageable pageable)
 }
 ```
 
-**DTO 변환 최적화**
+##### DTO 변환 최적화
+
 - MapStruct 또는 ModelMapper 사용으로 리플렉션 오버헤드 감소
 - 필요한 필드만 선택적으로 조회 (Projection 활용)
 
@@ -640,19 +706,22 @@ public Page<OrderDto.OrderResponse> getOrderList(Long userId, Pageable pageable)
 
 #### 1. 인증/인가 보안
 
-**JWT 토큰 보안**
+##### JWT 토큰 보안
+
 - Access Token: 짧은 만료 시간 (15분)
 - Refresh Token: 긴 만료 시간 (7일), HTTP-only Cookie 저장
 - 토큰 무효화: Redis를 활용한 블랙리스트 관리
 
-**비밀번호 보안**
+##### 비밀번호 보안
+
 ```java
 // BCrypt 해싱 (강도 12)
 BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 String hashedPassword = encoder.encode(rawPassword);
 ```
 
-**Rate Limiting**
+##### Rate Limiting
+
 ```java
 @RateLimiter(name = "login", fallbackMethod = "loginFallback")
 public ResponseEntity<TokenResponse> login(LoginRequest request) { ... }
@@ -660,7 +729,8 @@ public ResponseEntity<TokenResponse> login(LoginRequest request) { ... }
 
 #### 2. API 보안
 
-**입력 검증**
+##### 입력 검증
+
 ```java
 @Valid @RequestBody OrderDto.AddToCart request
 // Bean Validation 활용
@@ -668,15 +738,18 @@ public ResponseEntity<TokenResponse> login(LoginRequest request) { ... }
 private Integer qty;
 ```
 
-**SQL Injection 방지**
+##### SQL Injection 방지
+
 - JPA/Hibernate 사용으로 자동 방지
 - QueryDSL 사용 시 파라미터 바인딩 필수
 
-**XSS 방지**
+##### XSS 방지
+
 - Spring Security 기본 설정 활용
 - JSON 응답 시 자동 이스케이프
 
-**CORS 설정**
+##### CORS 설정
+
 ```java
 @Configuration
 public class CorsConfig {
@@ -694,12 +767,14 @@ public class CorsConfig {
 
 #### 3. 데이터 보안
 
-**민감 정보 암호화**
+##### 민감 정보 암호화
+
 - 비밀번호: BCrypt 해싱
 - 개인정보: AES-256 암호화 (선택적)
 - 로그: 민감 정보 마스킹
 
-**감사 로그 (Audit Log)**
+##### 감사 로그 (Audit Log)
+
 ```java
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -716,11 +791,13 @@ public class Orders extends BaseTimeEntity {
 
 #### 1. 트랜잭션 격리 수준
 
-**기본 전략**
+##### 기본 전략
+
 - 읽기 전용: `READ_COMMITTED` (기본값)
 - 쓰기 작업: `REPEATABLE_READ` (선택적)
 
-**데드락 방지**
+##### 데드락 방지
+
 ```java
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public void createOrder(Long userId) {
@@ -736,11 +813,13 @@ public void createOrder(Long userId) {
 
 #### 2. 분산 트랜잭션
 
-**Saga 패턴** (마이크로서비스 환경)
+##### Saga 패턴 (마이크로서비스 환경)
+
 - 주문 생성 → 재고 차감 → 결제 처리
 - 각 단계별 보상 트랜잭션 구현
 
-**이벤트 기반 아키텍처**
+##### 이벤트 기반 아키텍처
+
 ```java
 @TransactionalEventListener
 public void handleOrderCreated(OrderCreatedEvent event) {
@@ -753,7 +832,8 @@ public void handleOrderCreated(OrderCreatedEvent event) {
 
 #### 1. 구조화된 로깅
 
-**Logback 설정**
+##### Logback 설정
+
 ```xml
 <configuration>
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
@@ -771,7 +851,8 @@ public void handleOrderCreated(OrderCreatedEvent event) {
 </configuration>
 ```
 
-**로깅 전략**
+##### 로깅 전략
+
 - ERROR: 예외 발생, 복구 불가능한 오류
 - WARN: 예상 가능한 문제, 성능 이슈
 - INFO: 비즈니스 이벤트 (주문 생성, 결제 완료)
@@ -779,7 +860,8 @@ public void handleOrderCreated(OrderCreatedEvent event) {
 
 #### 2. APM (Application Performance Monitoring)
 
-**Spring Boot Actuator**
+##### Spring Boot Actuator
+
 ```yaml
 management:
   endpoints:
@@ -792,7 +874,8 @@ management:
         enabled: true
 ```
 
-**모니터링 지표**
+##### 모니터링 지표
+
 - API 응답 시간 (P50, P95, P99)
 - 데이터베이스 쿼리 시간
 - JVM 메모리 사용량
@@ -800,7 +883,8 @@ management:
 
 #### 3. 알림 설정
 
-**에러 알림**
+##### 에러 알림
+
 - Slack/Discord 웹훅 연동
 - 에러율 임계값 초과 시 알림
 - 데이터베이스 연결 실패 알림
@@ -809,7 +893,7 @@ management:
 
 #### 1. 테스트 피라미드
 
-```
+```text
         /\
        /E2E\          (10%) - 통합 E2E 테스트
       /------\
@@ -821,7 +905,8 @@ management:
 
 #### 2. 단위 테스트
 
-**Service 계층 테스트**
+##### Service 계층 테스트
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -848,7 +933,8 @@ class OrderServiceTest {
 
 #### 3. 통합 테스트
 
-**@SpringBootTest 활용**
+##### @SpringBootTest 활용
+
 ```java
 @SpringBootTest
 @Transactional
@@ -870,7 +956,8 @@ class OrderControllerIntegrationTest {
 
 #### 4. 테스트 커버리지
 
-**JaCoCo 설정**
+##### JaCoCo 설정
+
 ```gradle
 plugins {
     id 'jacoco'
@@ -892,7 +979,8 @@ jacocoTestReport {
 }
 ```
 
-**목표 커버리지**
+##### 목표 커버리지
+
 - 전체: 80% 이상
 - Service 계층: 90% 이상
 - Repository 계층: 70% 이상
@@ -948,18 +1036,21 @@ jobs:
 
 #### 2. 배포 전략
 
-**Blue-Green 배포**
+##### Blue-Green 배포
+
 - 두 개의 동일한 환경 운영
 - 새 버전을 Green 환경에 배포
 - 트래픽 전환 후 Blue 환경 제거
 
-**Canary 배포**
+##### Canary 배포
+
 - 소수의 사용자에게만 새 버전 배포
 - 모니터링 후 점진적 확대
 
 ### 데이터베이스 마이그레이션
 
-**Flyway 설정**
+#### Flyway 설정
+
 ```yaml
 spring:
   flyway:
@@ -968,7 +1059,8 @@ spring:
     baseline-on-migrate: true
 ```
 
-**마이그레이션 파일 예시**
+#### 마이그레이션 파일 예시
+
 ```sql
 -- V1__Create_orders_table.sql
 CREATE TABLE orders (
@@ -984,19 +1076,22 @@ CREATE TABLE orders (
 
 #### 1. 트러블슈팅
 
-**성능 이슈**
+##### 성능 이슈
+
 1. Slow Query 로그 확인
 2. 인덱스 사용 여부 확인 (`EXPLAIN` 활용)
 3. N+1 문제 확인 (Hibernate 통계 활성화)
 
-**메모리 이슈**
+##### 메모리 이슈
+
 1. JVM 힙 덤프 생성
 2. 메모리 누수 확인 (Eclipse MAT 활용)
 3. GC 로그 분석
 
 #### 2. 백업 및 복구
 
-**데이터베이스 백업**
+##### 데이터베이스 백업
+
 ```bash
 # MySQL 덤프
 mysqldump -u user -p shopping > backup_$(date +%Y%m%d).sql
@@ -1005,7 +1100,8 @@ mysqldump -u user -p shopping > backup_$(date +%Y%m%d).sql
 0 2 * * * /path/to/backup.sh
 ```
 
-**복구 절차**
+##### 복구 절차
+
 1. 최신 백업 확인
 2. 데이터베이스 복구
 3. 데이터 무결성 검증
@@ -1022,34 +1118,58 @@ mysqldump -u user -p shopping > backup_$(date +%Y%m%d).sql
 - [ ] GC 튜닝
 - [ ] API 응답 시간 모니터링
 
+- [ ] 데이터베이스 인덱스 최적화
+- [ ] 쿼리 성능 분석 및 개선
+- [ ] JPA N+1 문제 해결
+- [ ] 캐싱 전략 적용
+- [ ] 연결 풀 크기 조정
+- [ ] JVM 힙 크기 최적화
+- [ ] GC 튜닝
+- [ ] API 응답 시간 모니터링
+
 ### 아키텍처 결정 기록 (ADR)
 
 #### ADR-001: JWT 토큰 기반 인증 선택
 
-**상태**: 승인됨
+##### 상태
 
-**배경**: 세션 기반 인증 vs 토큰 기반 인증
+승인됨
 
-**결정**: JWT 토큰 기반 인증 채택
+##### 배경
 
-**이유**:
+세션 기반 인증 vs 토큰 기반 인증
+
+##### 결정
+
+JWT 토큰 기반 인증 채택
+
+##### 이유
+
 - 서버 확장성 (Stateless)
 - 마이크로서비스 아키텍처와의 호환성
 - 모바일 앱 지원 용이
 
-**대안 고려**:
+##### 대안 고려
+
 - OAuth 2.0: 복잡도 증가로 제외
 - 세션 기반: 확장성 문제로 제외
 
 #### ADR-002: QueryDSL 도입
 
-**상태**: 승인됨
+##### QueryDSL 상태
 
-**배경**: 동적 쿼리 작성 방법 선택
+승인됨
 
-**결정**: QueryDSL 도입
+##### QueryDSL 배경
 
-**이유**:
+동적 쿼리 작성 방법 선택
+
+##### QueryDSL 결정
+
+QueryDSL 도입
+
+##### QueryDSL 이유
+
 - 타입 안전성
 - 컴파일 타임 에러 검출
 - 복잡한 동적 쿼리 작성 용이
@@ -1058,7 +1178,8 @@ mysqldump -u user -p shopping > backup_$(date +%Y%m%d).sql
 
 #### 1. 정적 분석 도구
 
-**SonarQube 설정**
+##### SonarQube 설정
+
 ```gradle
 plugins {
     id "org.sonarqube" version "3.5.0"
@@ -1086,19 +1207,22 @@ sonarqube {
 
 #### 1. 부하 테스트
 
-**JMeter 스크립트 예시**
+##### JMeter 스크립트 예시
+
 - 동시 사용자: 100명
 - Ramp-up 시간: 10초
 - 테스트 지속 시간: 5분
 
-**목표 지표**
+##### 목표 지표
+
 - 응답 시간: P95 < 500ms
 - 에러율: < 0.1%
 - TPS: > 1000
 
 #### 2. 성능 프로파일링
 
-**JProfiler 활용**
+##### JProfiler 활용
+
 - CPU 사용률 분석
 - 메모리 할당 패턴 분석
 - 메서드 실행 시간 분석

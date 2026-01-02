@@ -22,6 +22,8 @@ public class QOrders extends EntityPathBase<Orders> {
 
     public final com.example.shopping.domain.entity.QBaseTimeEntity _super = new com.example.shopping.domain.entity.QBaseTimeEntity(this);
 
+    public final StringPath carrier = createString("carrier");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
@@ -32,6 +34,8 @@ public class QOrders extends EntityPathBase<Orders> {
     public final ListPath<OrderItem, QOrderItem> orderItems = this.<OrderItem, QOrderItem>createList("orderItems", OrderItem.class, QOrderItem.class, PathInits.DIRECT2);
 
     public final StringPath status = createString("status");
+
+    public final StringPath trackingNumber = createString("trackingNumber");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
