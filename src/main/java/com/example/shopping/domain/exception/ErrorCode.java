@@ -43,6 +43,9 @@ public enum ErrorCode {
     // 주문 관련 에러 (400)
     CART_EMPTY(HttpStatus.BAD_REQUEST, "ORDER_001", "장바구니가 비어있습니다."),
     NO_ITEMS_TO_ORDER(HttpStatus.BAD_REQUEST, "ORDER_002", "주문할 상품이 없습니다."),
+    ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER_003", "주문 정보를 찾을 수 없습니다."),
+    ORDER_ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "ORDER_004", "이미 취소된 주문입니다."),
+    ADMIN_PERMISSION_REQUIRED(HttpStatus.BAD_REQUEST, "AUTH_005", "관리자 권한이 필요합니다."),
     
     // 서버 내부 에러 (500)
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_001", "서버 내부 오류가 발생했습니다.");

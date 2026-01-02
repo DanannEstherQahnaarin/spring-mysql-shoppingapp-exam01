@@ -10,7 +10,7 @@ import java.util.Optional;
 import com.example.shopping.domain.entity.order.Orders;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-public class OrdersRepositoryImpl implements OrdersRepositoryC {
+public class OrdersRepositoryImpl implements OrdersCusomRepository {
 
     JPAQueryFactory queryFactory;
 

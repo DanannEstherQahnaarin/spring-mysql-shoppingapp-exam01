@@ -30,5 +30,5 @@ import com.example.shopping.domain.entity.order.Orders;
  * @author shopping-server
  * @since 1.0
  */
-public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRepositoryC {
+public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersCusomRepository {
 }

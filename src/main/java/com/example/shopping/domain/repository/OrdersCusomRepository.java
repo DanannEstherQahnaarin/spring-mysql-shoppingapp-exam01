@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.example.shopping.domain.entity.order.Orders;
 
-public interface OrdersRepositoryC{
+public interface OrdersCusomRepository{
     List<Orders> findByUserIdWithItems(Long id);
 
     Optional<Orders> findOrderDetail(Long id);

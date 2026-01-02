@@ -29,12 +29,22 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 - 상품 목록 조회 (QueryDSL 기반 동적 쿼리)
 
 ### 3. 주문 관리 (Order Management)
-- 장바구니 담기: 상품을 장바구니에 추가 (중복 시 수량 증가)
-- 장바구니 조회: 현재 사용자의 장바구니 항목 조회
-- 주문하기: 장바구니의 모든 상품을 주문 처리
-  - 재고 차감 (트랜잭션 보장)
-  - 주문 내역 저장
-  - 장바구니 비우기
+- **장바구니 관리**
+  - 장바구니 담기: 상품을 장바구니에 추가 (중복 시 수량 증가)
+  - 장바구니 조회: 현재 사용자의 장바구니 항목 조회
+  - 장바구니 항목 수량 변경: 장바구니에 담긴 상품의 수량 수정
+  - 장바구니 항목 삭제: 장바구니에서 특정 상품 제거
+- **주문 처리**
+  - 주문하기: 장바구니의 모든 상품을 주문 처리
+    - 재고 차감 (트랜잭션 보장)
+    - 주문 내역 저장
+    - 장바구니 비우기
+- **주문 내역 관리** (서비스 레이어 구현 완료)
+  - 주문 내역 조회: 사용자의 모든 주문 목록 조회
+  - 주문 상세 조회: 특정 주문의 상세 정보 조회
+  - 주문 취소: 주문 취소 및 재고 복구
+- **주문 상태 관리** (서비스 레이어 구현 완료)
+  - 주문 상태 변경: 관리자 권한으로 주문 상태 변경
 
 ### 4. 통합 예외 처리 (Exception Handling)
 - 전역 예외 처리: `@RestControllerAdvice`를 활용한 일관된 에러 응답
@@ -218,9 +228,11 @@ Docker Compose를 사용한 실행 예시:
 - `GET /api/products/list` - 상품 목록 조회
 
 ### 주문 (Order)
-- `POST /api/orders/cart` - 장바구니 담기 (인증 필요)
+- `POST /api/orders/cart/add` - 장바구니 담기 (인증 필요)
 - `GET /api/orders/cart` - 장바구니 조회 (인증 필요)
-- `POST /api/orders` - 주문하기 (인증 필요)
+- `PUT /api/orders/cart/update/{cartItemId}` - 장바구니 항목 수량 변경 (인증 필요)
+- `DELETE /api/orders/cart/delete/{cartItemId}` - 장바구니 항목 삭제 (인증 필요)
+- `POST /api/orders/order/create` - 주문하기 (인증 필요)
 
 ## 예외 처리 (Exception Handling)
 
@@ -369,26 +381,28 @@ HTTP 400 Bad Request
 ### 3. 주문 관리 기능 확장
 
 #### 현재 구현
-- ✅ 장바구니 담기
-- ✅ 장바구니 조회
-- ✅ 주문하기
+- ✅ 장바구니 담기 (`POST /api/orders/cart/add`)
+- ✅ 장바구니 조회 (`GET /api/orders/cart`)
+- ✅ 장바구니 항목 수량 변경 (`PUT /api/orders/cart/update/{cartItemId}`)
+- ✅ 장바구니 항목 삭제 (`DELETE /api/orders/cart/delete/{cartItemId}`)
+- ✅ 주문하기 (`POST /api/orders/order/create`)
+- ✅ 주문 내역 조회 (서비스 레이어 구현 완료)
+- ✅ 주문 상세 조회 (서비스 레이어 구현 완료)
+- ✅ 주문 취소 (서비스 레이어 구현 완료, 재고 복구 포함)
+- ✅ 주문 상태 변경 (관리자, 서비스 레이어 구현 완료)
 
 #### 추가 가능한 기능
 - **장바구니 관리**
-  - 장바구니 항목 수량 변경 (`PUT /api/orders/cart/{cartItemId}`)
-  - 장바구니 항목 삭제 (`DELETE /api/orders/cart/{cartItemId}`)
   - 장바구니 전체 비우기
   
 - **주문 내역 관리**
-  - 주문 내역 조회 (`GET /api/orders`)
-  - 주문 상세 조회 (`GET /api/orders/{orderId}`)
-  - 주문 취소 (`POST /api/orders/{orderId}/cancel`)
-  - 주문 상태 조회 (주문완료, 배송중, 배송완료, 취소 등)
+  - 주문 내역 조회 API 엔드포인트 추가 (`GET /api/orders`)
+  - 주문 상세 조회 API 엔드포인트 추가 (`GET /api/orders/{orderId}`)
+  - 주문 취소 API 엔드포인트 추가 (`POST /api/orders/{orderId}/cancel`)
   
 - **주문 상태 관리**
-  - 주문 상태 변경 (관리자)
+  - 주문 상태 변경 API 엔드포인트 추가 (관리자)
   - 배송 정보 관리
-  - 주문 취소 시 재고 복구
 
 ### 4. 리뷰 및 평점 시스템
 
@@ -524,9 +538,11 @@ HTTP 400 Bad Request
 
 #### Phase 1 (기본 기능 확장)
 1. 상품 상세 조회, 수정, 삭제
-2. 장바구니 수량 변경, 항목 삭제
-3. 주문 내역 조회
+2. ✅ 장바구니 수량 변경, 항목 삭제 (구현 완료)
+3. ✅ 주문 내역 조회 (서비스 레이어 구현 완료, API 엔드포인트 추가 필요)
 4. 프로필 조회/수정
+5. 주문 내역 조회/상세/취소 API 엔드포인트 추가
+6. 주문 상태 변경 API 엔드포인트 추가
 
 #### Phase 2 (사용자 경험 개선)
 1. 상품 검색 및 필터링

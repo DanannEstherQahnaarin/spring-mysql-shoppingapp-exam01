@@ -87,4 +87,12 @@ public class Orders extends BaseTimeEntity {
     @Column(name = "ordered_at")
     @Builder.Default
     private LocalDateTime orderedAt = LocalDateTime.now();
+
+    public void updateStatus(String status) {
+        this.status = status;
+    }
+
+    public void cancel() {
+        this.status = "cancel";
+    }
 }

@@ -33,6 +33,6 @@ import com.example.shopping.domain.entity.product.Product;
  * @author shopping-server
  * @since 1.0
  */
-public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryC {
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductCustomRepository {
     
 }

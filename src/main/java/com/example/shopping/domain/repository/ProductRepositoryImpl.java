@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
  * @since 1.0
  */
 @RequiredArgsConstructor
-public class ProductRepositoryImpl implements ProductRepositoryC {
+public class ProductRepositoryImpl implements ProductCustomRepository {
 
     /**
      * QueryDSL 쿼리 실행을 위한 팩토리

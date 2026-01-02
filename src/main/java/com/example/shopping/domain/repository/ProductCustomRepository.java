@@ -30,7 +30,7 @@ import com.example.shopping.domain.dto.ProductDto;
  * @author shopping-server
  * @since 1.0
  */
-public interface ProductRepositoryC {
+public interface ProductCustomRepository {
     /**
      * 모든 상품을 카테고리와 조인하여 조회합니다.
      * 

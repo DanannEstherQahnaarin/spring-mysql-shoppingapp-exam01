@@ -1,6 +1,8 @@
 package com.example.shopping.domain.entity.user;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.shopping.domain.entity.BaseTimeEntity;
 import com.example.shopping.domain.enums.UserStatus;
@@ -12,18 +14,21 @@ import lombok.*;
 /**
  * 사용자 엔티티
  * 
- * <p>쇼핑몰 애플리케이션의 사용자 정보를 관리하는 핵심 엔티티입니다.
+ * <p>
+ * 쇼핑몰 애플리케이션의 사용자 정보를 관리하는 핵심 엔티티입니다.
  * 사용자의 기본 정보(로그인 ID, 이메일, 전화번호)와 상태, 가입 유형을 저장합니다.
  * 
- * <p>관계:
+ * <p>
+ * 관계:
  * <ul>
- *   <li>UserAuth와 1:1 관계 (인증 정보)</li>
- *   <li>UserProfile과 1:1 관계 (프로필 정보)</li>
+ * <li>UserAuth와 1:1 관계 (인증 정보)</li>
+ * <li>UserProfile과 1:1 관계 (프로필 정보)</li>
  * </ul>
  * 
- * <p>인덱스:
+ * <p>
+ * 인덱스:
  * <ul>
- *   <li>email 컬럼에 인덱스가 설정되어 있어 이메일 기반 조회 성능이 최적화되어 있습니다.</li>
+ * <li>email 컬럼에 인덱스가 설정되어 있어 이메일 기반 조회 성능이 최적화되어 있습니다.</li>
  * </ul>
  * 
  * @author shopping-server
@@ -31,7 +36,7 @@ import lombok.*;
  */
 @Entity
 @Table(name = "users", indexes = {
-    @Index(name = "idx_users", columnList = "email")
+        @Index(name = "idx_users", columnList = "email")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -97,14 +102,17 @@ public class User extends BaseTimeEntity {
      */
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
-    
+
     /**
      * 마지막 로그인 시간을 현재 시간으로 갱신합니다.
      * 
-     * <p>사용자가 로그인에 성공했을 때 호출되어야 합니다.
+     * <p>
+     * 사용자가 로그인에 성공했을 때 호출되어야 합니다.
      * 이 메서드를 호출하면 lastLoginAt 필드가 현재 시간으로 업데이트됩니다.
      * 
-     * <p>사용 예:
+     * <p>
+     * 사용 예:
+     * 
      * <pre>
      * user.updateLastLogin();
      * userRepository.save(user);
@@ -112,5 +120,18 @@ public class User extends BaseTimeEntity {
      */
     public void updateLastLogin() {
         this.lastLoginAt = LocalDateTime.now();
+    }
+
+    // 추가: Role과의 다대다 매핑
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role_map", // 연결 테이블 이름 (Step 1 SQL과 일치)
+            joinColumns = @JoinColumn(name = "user_id"), // 내 FK
+            inverseJoinColumns = @JoinColumn(name = "role_id") // 상대 FK
+    )
+    private List<Role> roles = new ArrayList<>();
+
+    // 편의 메서드: 권한 추가
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 }

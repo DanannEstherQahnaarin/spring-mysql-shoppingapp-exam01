@@ -29,7 +29,7 @@ import com.example.shopping.domain.entity.user.User;
  * @author shopping-server
  * @since 1.0
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserCusomRepository {
     /**
      * 로그인 ID로 사용자를 조회합니다.
      * 

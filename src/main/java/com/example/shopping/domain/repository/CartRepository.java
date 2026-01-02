@@ -26,7 +26,7 @@ import com.example.shopping.domain.entity.order.Cart;
  * @author shopping-server
  * @since 1.0
  */
-public interface CartRepository extends JpaRepository<Cart, Long> {
+public interface CartRepository extends JpaRepository<Cart, Long>, CartCustomRepository {
     /**
      * 사용자 ID로 장바구니를 조회합니다.
      * 

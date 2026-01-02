@@ -19,6 +19,7 @@ import com.example.shopping.domain.repository.CartRepository;
 import com.example.shopping.domain.repository.OrderItemRepository;
 import com.example.shopping.domain.repository.OrdersRepository;
 import com.example.shopping.domain.repository.ProductRepository;
+import com.example.shopping.domain.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,6 +74,8 @@ public class OrderService {
 
     /** 주문 항목 Repository */
     private final OrderItemRepository orderItemRepository;
+
+    private final UserRepository userRepository;
 
     /**
      * 장바구니에 상품을 담습니다.
@@ -323,10 +326,10 @@ public class OrderService {
     public OrderDto.OrderDetailResponse getOrderDetail(Long userId, Long orderId) {
         // 1. 한방 쿼리로 상세 정보 가져오기
         Orders order = ordersRepository.findOrderDetail(orderId)
-                .orElseThrow(() -> new RuntimeException("주문 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         if (!order.getUserId().equals(userId)) {
-            throw new RuntimeException("권한이 없습니다.");
+            throw new BusinessException(ErrorCode.NOT_HAVE_PERMISSION);
         }
 
         OrderDto.OrderDetailResponse res = new OrderDto.OrderDetailResponse();
@@ -348,5 +351,46 @@ public class OrderService {
         }).collect(Collectors.toList()));
 
         return res;
+    }
+
+    // 주문 취소
+    @Transactional
+    public void cancelOrder(Long userId, Long orderId) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+        if (!order.getUserId().equals(userId)) throw new BusinessException(ErrorCode.NOT_HAVE_PERMISSION);
+        if ("cancel".equals(order.getStatus())) throw new BusinessException(ErrorCode.ORDER_ALREADY_CANCELLED);
+
+        order.cancel(); // 상태 변경
+
+        // 재고 복구
+        // (FetchJoin이 안 된 상태라면 LazyLoading 발생. 성능 중요시 findOrderDetail 사용 권장)
+        List<OrderItem> items = orderItemRepository.findAll(); // *최적화 필요: findAllByOrder_OrderId(orderId)
+        for (OrderItem item : items) {
+            if(item.getOrder().getOrderId().equals(orderId)) {
+                item.getProduct().addStock(item.getQty());
+            }
+        }
+    }
+
+    // 주문 상태 변경 (관리자 전용)
+    @Transactional
+    public void updateOrderStatus(Long userId, Long orderId, String status) {
+        // 1. 관리자 권한 체크 (QueryDSL)
+        if (!userRepository.isAdmin(userId)) {
+            throw new BusinessException(ErrorCode.ADMIN_PERMISSION_REQUIRED);
+        }
+
+        // 2. 주문 조회 및 상태 변경
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+        
+        order.updateStatus(status);
+    }
+
+    private void validateCartOwner(Long userId, CartItem cartItem) {
+        if (!cartItem.getCart().getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.NOT_HAVE_PERMISSION);
+        }
     }
 }

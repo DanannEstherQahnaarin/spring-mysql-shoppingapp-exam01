@@ -100,4 +100,8 @@ public class Product {
         }
         this.stock = restStock;
     }
+
+    public void addStock(int quantity) {
+        this.stock += quantity;
+    }
 }

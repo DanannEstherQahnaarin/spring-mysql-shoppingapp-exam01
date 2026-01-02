@@ -3,6 +3,7 @@ package com.example.shopping.domain.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -116,5 +117,11 @@ public class OrderDto {
         private LocalDateTime orderedAt;
         private List<CartItemResponse> orderItems; // 기존 CartItemResponse 재사용 (구조가 비슷하므로)
         private Integer totalAmount;
+    }
+
+    @Data
+    public static class UpdateStatus {
+        @NotBlank
+        private String status; // delivery, delivered, cancel 등
     }
 }
