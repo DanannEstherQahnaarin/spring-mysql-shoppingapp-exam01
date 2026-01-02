@@ -1,5 +1,8 @@
 package com.example.shopping.domain.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -94,5 +97,24 @@ public class OrderDto {
         
         /** 장바구니에 담은 수량 */
         private Integer qty;
+    }
+
+    @Data
+    public static class OrderResponse {
+        private Long orderId;
+        private String status;
+        private LocalDateTime orderedAt;
+        private String representativeProductName; // "상품A 외 2건"
+        private Integer totalAmount;
+    }
+
+    // 주문 상세 조회용
+    @Data
+    public static class OrderDetailResponse {
+        private Long orderId;
+        private String status;
+        private LocalDateTime orderedAt;
+        private List<CartItemResponse> orderItems; // 기존 CartItemResponse 재사용 (구조가 비슷하므로)
+        private Integer totalAmount;
     }
 }

@@ -3,6 +3,8 @@ package com.example.shopping.domain.entity.order;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.shopping.domain.entity.BaseTimeEntity;
 
@@ -73,6 +75,9 @@ public class Orders extends BaseTimeEntity {
     @Column(nullable = false)
     @Builder.Default
     private String status = "complete";
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     /**
      * 주문 시간
