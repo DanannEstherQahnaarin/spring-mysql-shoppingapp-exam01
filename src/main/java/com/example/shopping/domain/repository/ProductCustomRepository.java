@@ -2,6 +2,10 @@ package com.example.shopping.domain.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.example.shopping.domain.dto.ProdSearchCond;
 import com.example.shopping.domain.dto.ProductDto;
 
 /**
@@ -31,13 +35,7 @@ import com.example.shopping.domain.dto.ProductDto;
  * @since 1.0
  */
 public interface ProductCustomRepository {
-    /**
-     * 모든 상품을 카테고리와 조인하여 조회합니다.
-     * 
-     * <p>상품 ID 기준 내림차순으로 정렬하여 반환합니다.
-     * ProductDto.Response에 매핑하여 필요한 필드만 조회합니다.
-     * 
-     * @return 상품 목록 (DTO 리스트)
-     */
     List<ProductDto.Response> findAllProducts();
+
+    Page<ProductDto.Response> search(ProdSearchCond condition, Pageable pageable);
 }
