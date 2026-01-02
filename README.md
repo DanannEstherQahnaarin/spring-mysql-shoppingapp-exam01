@@ -267,3 +267,11 @@ Docker Compose를 사용한 실행 예시:
 - [운영 가이드](./docs/OPERATIONS_GUIDE.md) - 트러블슈팅, 백업/복구, 성능 튜닝
 - [코드 품질 관리](./docs/CODE_QUALITY.md) - 정적 분석 도구, 코드 리뷰 체크리스트
 - [성능 벤치마크](./docs/PERFORMANCE_BENCHMARK.md) - 부하 테스트, 성능 프로파일링
+
+## 참고 자료
+
+- [Spring Boot 공식 문서](https://spring.io/projects/spring-boot)
+- [JPA Best Practices](https://vladmihalcea.com/jpa-persistence-best-practices/)
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [12-Factor App](https://12factor.net/)
+
