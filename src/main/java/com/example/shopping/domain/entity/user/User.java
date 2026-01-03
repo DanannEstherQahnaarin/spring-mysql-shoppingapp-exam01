@@ -137,4 +137,25 @@ public class User extends BaseTimeEntity {
     }
 
     public void withdraw() { this.status = UserStatus.WITHDRAWN; }
+
+    /**
+     * 사용자 상태를 업데이트합니다.
+     * 
+     * <p>
+     * 관리자가 사용자의 상태를 변경할 때 사용됩니다.
+     * 예: ACTIVE, SUSPENDED, WITHDRAWN, DORMANT 등
+     * 
+     * <p>
+     * 사용 예:
+     * 
+     * <pre>
+     * user.updateStatus(UserStatus.SUSPENDED);
+     * userRepository.save(user);
+     * </pre>
+     * 
+     * @param status 변경할 사용자 상태
+     */
+    public void updateStatus(UserStatus status) {
+        this.status = status;
+    }
 }

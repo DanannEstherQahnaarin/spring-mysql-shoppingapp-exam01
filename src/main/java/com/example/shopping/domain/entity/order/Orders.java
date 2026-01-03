@@ -77,6 +77,7 @@ public class Orders extends BaseTimeEntity {
     private String status = "complete";
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(name = "tracking_number")
@@ -84,6 +85,15 @@ public class Orders extends BaseTimeEntity {
 
     @Column(length = 50)
     private String carrier;
+
+    /**
+     * 주문 총액
+     * 주문의 전체 금액입니다.
+     * 주문 항목들의 가격 합계를 저장합니다.
+     * 단위는 원(KRW)입니다.
+     */
+    @Column(name = "total_amount")
+    private Integer totalAmount;
 
     public void updateDeliveryInfo(String status, String carrier, String trackingNumber) {
         this.status = status;

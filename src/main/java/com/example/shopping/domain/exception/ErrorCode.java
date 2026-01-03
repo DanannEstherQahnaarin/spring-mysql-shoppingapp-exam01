@@ -26,11 +26,20 @@ public enum ErrorCode {
     // 인증 관련 에러 (400)
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH_001", "사용자를 찾을 수 없습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH_002", "비밀번호가 일치하지 않습니다."),
+    INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH_006", "현재 비밀번호가 일치하지 않습니다."),
     DUPLICATE_LOGIN_ID(HttpStatus.BAD_REQUEST, "AUTH_003", "이미 사용 중인 로그인 ID입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "AUTH_004", "이미 사용 중인 이메일입니다."),
+    INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH_007", "잘못된 인증코드입니다."),
+    VERIFICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "AUTH_008", "인증코드가 만료되었습니다."),
+    INVALID_USER_STATUS(HttpStatus.BAD_REQUEST, "AUTH_009", "잘못된 상태 값입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_010", "Refresh Token이 유효하지 않습니다."),
+    TOKEN_USER_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH_011", "토큰의 유저 정보가 일치하지 않습니다."),
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_012", "잘못된 토큰입니다."),
+    USER_LOGGED_OUT(HttpStatus.BAD_REQUEST, "AUTH_013", "로그아웃 된 사용자입니다."),
+    USER_PROFILE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH_014", "프로필을 찾을 수 없습니다."),
     
     // 권한 관련 에러 (400)
-    NOT_HAVE_PERMISSION(HttpStatus.BAD_REQUEST, "AUTH_004", "권한이 없습니다."),
+    NOT_HAVE_PERMISSION(HttpStatus.BAD_REQUEST, "AUTH_015", "권한이 없습니다."),
 
     // 상품 관련 에러 (400)
     PRODUCT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PRODUCT_001", "상품을 찾을 수 없습니다."),

@@ -24,6 +24,12 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
 - 회원가입: 사용자 정보, 프로필, 인증 정보 저장
 - 로그인: JWT 토큰 기반 인증
 - JWT 토큰 발급 및 검증
+- 토큰 재발급: Refresh Token을 통한 Access Token 갱신
+- 로그아웃: 토큰 무효화
+- 비밀번호 변경: 로그인 상태에서 비밀번호 변경
+- 비밀번호 찾기: 이메일 인증코드를 통한 비밀번호 초기화
+- 회원 탈퇴: Soft Delete 방식의 회원 탈퇴
+- 프로필 수정: 사용자 프로필 정보 수정
 
 ### 2. 상품 관리 (Product Management)
 
@@ -60,12 +66,25 @@ Spring Boot 기반의 RESTful API 쇼핑몰 서버 애플리케이션
   - 주문 상태 변경: 관리자 권한으로 주문 상태 변경 (`PATCH /api/orders/{orderId}/status`)
   - 배송 정보 관리: 택배사, 운송장 번호 등 배송 정보 업데이트
 
-### 4. 통합 예외 처리 (Exception Handling)
+### 4. 관리자 기능 (Admin Features)
+
+- **통계 조회**
+  - 일별 매출 통계: 최근 30일간의 일별 매출 및 주문 건수 조회
+  - 카테고리별 판매 통계: 카테고리별 판매 수량 및 매출 조회
+- **회원 관리**
+  - 회원 목록 조회: 전체 회원 목록 조회
+  - 회원 상태 변경: 회원 상태 변경 (ACTIVE, SUSPENDED, WITHDRAWN, DORMANT)
+- **주문 관리**
+  - 전체 주문 조회: 모든 주문 목록 조회 (주문자 정보 포함)
+  - 주문 상태 변경: 주문 상태 및 배송 정보 변경
+
+### 5. 통합 예외 처리 (Exception Handling)
 
 - 전역 예외 처리: `@RestControllerAdvice`를 활용한 일관된 에러 응답
 - 에러 코드 관리: `ErrorCode` enum을 통한 중앙화된 에러 코드 및 메시지 관리
 - 커스텀 예외: `BusinessException`을 통한 비즈니스 로직 예외 처리
 - 표준화된 에러 응답: 클라이언트에게 일관된 형식의 에러 정보 제공
+- **완료**: domain 폴더 내 모든 `RuntimeException`을 `BusinessException`으로 전환 완료
 
 ### 서비스 흐름
 

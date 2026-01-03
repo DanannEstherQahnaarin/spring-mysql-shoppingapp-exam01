@@ -135,7 +135,7 @@ public class AuthService {
     public AuthDto.TokenResponse login(AuthDto.LoginRequest request) {
         // ... (기존 ID/PW 검증 로직) ...
         User user = userRepository.findByLoginId(request.getLoginId())
-                 .orElseThrow(() -> new RuntimeException("가입되지 않은 아이디입니다."));
+                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         // ... (비밀번호 체크 로직) ...
 
         // 토큰 생성
@@ -157,7 +157,7 @@ public class AuthService {
     public AuthDto.TokenResponse reissue(AuthDto.TokenRequest request) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(request.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         // 2. Access Token에서 User ID 가져오기
@@ -166,11 +166,11 @@ public class AuthService {
 
         // 3. 저장소에서 User ID를 기반으로 Refresh Token 가져오기
         RefreshToken refreshToken = refreshTokenRepository.findByKey(userId)
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_LOGGED_OUT));
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(request.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new BusinessException(ErrorCode.TOKEN_USER_MISMATCH);
         }
 
         // 5. 새로운 토큰 생성
@@ -188,7 +188,7 @@ public class AuthService {
     public void logout(String accessToken) {
          // 1. Access Token 검증
         if (!tokenProvider.validateToken(accessToken)) {
-            throw new RuntimeException("잘못된 요청입니다.");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
 
         // 2. Access Token에서 User ID를 가져옴

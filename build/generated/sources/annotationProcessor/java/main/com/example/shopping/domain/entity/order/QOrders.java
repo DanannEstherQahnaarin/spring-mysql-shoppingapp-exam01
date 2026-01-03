@@ -35,6 +35,8 @@ public class QOrders extends EntityPathBase<Orders> {
 
     public final StringPath status = createString("status");
 
+    public final NumberPath<Integer> totalAmount = createNumber("totalAmount", Integer.class);
+
     public final StringPath trackingNumber = createString("trackingNumber");
 
     //inherited

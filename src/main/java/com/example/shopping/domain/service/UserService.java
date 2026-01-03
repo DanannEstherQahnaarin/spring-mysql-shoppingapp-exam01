@@ -1,17 +1,22 @@
 package com.example.shopping.domain.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.shopping.domain.dto.AdminDto;
 import com.example.shopping.domain.dto.UserDto;
 import com.example.shopping.domain.entity.user.EmailVerification;
 import com.example.shopping.domain.entity.user.User;
 import com.example.shopping.domain.entity.user.UserAuth;
 import com.example.shopping.domain.entity.user.UserProfile;
+import com.example.shopping.domain.enums.UserStatus;
+import com.example.shopping.domain.exception.BusinessException;
+import com.example.shopping.domain.exception.ErrorCode;
 import com.example.shopping.domain.repository.EmailVerificationRepository;
 import com.example.shopping.domain.repository.UserAuthRepository;
 import com.example.shopping.domain.repository.UserProfileRepository;
@@ -34,10 +39,10 @@ public class UserService {
     @Transactional
     public void changePassword(Long userId, UserDto.ChangePassword request) {
         UserAuth userAuth = userAuthRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 정보 없음"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), userAuth.getPasswordHash())) {
-            throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
+            throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
         }
 
         userAuth.updatePassword(passwordEncoder.encode(request.getNewPassword())); // *Entity에 메서드 추가 필요
@@ -47,7 +52,7 @@ public class UserService {
     @Transactional
     public void updateProfile(Long userId, UserDto.UpdateProfile request) {
         UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("프로필 없음"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_PROFILE_NOT_FOUND));
         
         // 이름 수정
         if (request.getName() != null) {
@@ -60,7 +65,7 @@ public class UserService {
     @Transactional
     public void withdraw(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 없음"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         user.withdraw(); // status -> WITHDRAWN
     }
 
@@ -68,7 +73,7 @@ public class UserService {
     @Transactional
     public void sendVerificationCode(String email) {
         User user = userRepository.findByEmail(email) // *Repository 메서드 추가 필요
-                .orElseThrow(() -> new RuntimeException("가입되지 않은 이메일입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         String code = UUID.randomUUID().toString().substring(0, 6); // 6자리 랜덤 코드
 
@@ -88,18 +93,43 @@ public class UserService {
     public void resetPassword(UserDto.ResetPassword request) {
         // 1. 인증코드 검증
         EmailVerification ev = emailVerificationRepository.findByEmailAndVerificationCode(request.getEmail(), request.getVerificationCode())
-                .orElseThrow(() -> new RuntimeException("잘못된 인증코드입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_VERIFICATION_CODE));
 
         if (ev.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("인증코드가 만료되었습니다.");
+            throw new BusinessException(ErrorCode.VERIFICATION_CODE_EXPIRED);
         }
 
         ev.verify(); // 사용 처리
 
         // 2. 비밀번호 변경
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        UserAuth userAuth = userAuthRepository.findById(user.getUserId()).orElseThrow();
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        UserAuth userAuth = userAuthRepository.findById(user.getUserId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         
         userAuth.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminDto.UserResponse> getAllUsers(Long adminId) {
+        if (!userRepository.isAdmin(adminId)) throw new BusinessException(ErrorCode.ADMIN_PERMISSION_REQUIRED);
+        return userRepository.findAllUsers();
+    }
+
+    // 회원 상태 변경 (정지/해제 등)
+    @Transactional
+    public void updateUserStatus(Long adminId, Long targetUserId, String statusStr) {
+        if (!userRepository.isAdmin(adminId)) throw new BusinessException(ErrorCode.ADMIN_PERMISSION_REQUIRED);
+        
+        User user = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        
+        // 상태 변경
+        try {
+            UserStatus status = UserStatus.valueOf(statusStr);
+            user.updateStatus(status); // *User Entity에 updateStatus 메서드 필요 (아래 참고)
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.INVALID_USER_STATUS);
+        }
     }
 }

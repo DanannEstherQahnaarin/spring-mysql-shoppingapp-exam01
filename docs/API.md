@@ -30,3 +30,11 @@
 - `POST /api/orders/{orderId}/cancel` - 주문 취소 (인증 필요)
 - `PATCH /api/orders/{orderId}/status` - 주문 상태 및 배송 정보 변경 (관리자, 인증 필요)
 
+## 관리자 (Admin)
+
+- `GET /api/admin/stats/sales/daily` - 일별 매출 통계 조회 (관리자, 인증 필요)
+- `GET /api/admin/stats/sales/category` - 카테고리별 판매 통계 조회 (관리자, 인증 필요)
+- `GET /api/admin/stats/users` - 회원 목록 조회 (관리자, 인증 필요)
+- `PATCH /api/admin/stats/users/{userId}/status` - 회원 상태 변경 (관리자, 인증 필요)
+- `GET /api/admin/stats/orders` - 전체 주문 조회 (관리자, 인증 필요)
+
