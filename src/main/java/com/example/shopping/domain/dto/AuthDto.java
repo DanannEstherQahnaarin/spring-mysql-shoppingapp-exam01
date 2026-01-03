@@ -1,6 +1,7 @@
 package com.example.shopping.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -113,20 +114,17 @@ public class AuthDto {
      * </pre>
      */
     @Data
+    @AllArgsConstructor
     public static class TokenResponse {
-        /** JWT 액세스 토큰 - 인증된 사용자의 API 접근에 사용되는 토큰 */
+        private String grantType;
         private String accessToken;
-        
-        /** 토큰 타입 - Bearer 토큰 방식 사용 (기본값: "Bearer") */
-        private String tokenType = "Bearer";
-        
-        /**
-         * 토큰 응답 생성자
-         * 
-         * @param accessToken JWT 액세스 토큰
-         */
-        public TokenResponse(String accessToken) {
-            this.accessToken = accessToken;
-        }
+        private String refreshToken; // 추가됨
+        private Long accessTokenExpiresIn;
+    }
+
+    @Data
+    public static class TokenRequest {
+        private String accessToken;
+        private String refreshToken;
     }
 }

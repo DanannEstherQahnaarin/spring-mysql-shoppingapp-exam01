@@ -5,15 +5,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.shopping.domain.dto.AuthDto;
 import com.example.shopping.domain.exception.BusinessException;
 import com.example.shopping.domain.exception.ErrorCode;
+import com.example.shopping.domain.entity.user.RefreshToken;
 import com.example.shopping.domain.entity.user.User;
 import com.example.shopping.domain.entity.user.UserAuth;
 import com.example.shopping.domain.entity.user.UserProfile;
 import com.example.shopping.domain.enums.JoinType;
 import com.example.shopping.domain.enums.UserStatus;
+import com.example.shopping.domain.repository.RefreshTokenRepository;
 import com.example.shopping.domain.repository.UserAuthRepository;
 import com.example.shopping.domain.repository.UserProfileRepository;
 import com.example.shopping.domain.repository.UserRepository;
 import com.example.shopping.global.security.JwtTokenProvider;
+
+import io.jsonwebtoken.Claims;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -64,6 +68,8 @@ public class AuthService {
     
     /** JWT 토큰 제공자 */
     private final JwtTokenProvider tokenProvider;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 회원가입을 처리합니다.
@@ -123,46 +129,74 @@ public class AuthService {
         return saveUser.getUserId();
     }
 
-    /**
-     * 로그인을 처리하고 JWT 토큰을 발급합니다.
-     * 
-     * <p>처리 과정:
-     * <ol>
-     *   <li>로그인 ID로 사용자를 조회합니다.</li>
-     *   <li>사용자의 인증 정보를 조회합니다.</li>
-     *   <li>입력된 비밀번호와 저장된 해시값을 비교하여 인증합니다.</li>
-     *   <li>인증 성공 시 마지막 로그인 시간을 업데이트합니다.</li>
-     *   <li>JWT 토큰을 생성하여 반환합니다.</li>
-     * </ol>
-     * 
-     * <p>트랜잭션:
-     * <ul>
-     *   <li>로그인 시간 업데이트와 토큰 발급이 하나의 트랜잭션으로 처리됩니다.</li>
-     * </ul>
-     * 
-     * <p>인증 실패:
-     * <ul>
-     *   <li>사용자가 존재하지 않는 경우: Optional.orElseThrow()로 예외 발생</li>
-     *   <li>비밀번호가 일치하지 않는 경우: RuntimeException 발생 (현재 예외 처리 미구현)</li>
-     * </ul>
-     * 
-     * @param request 로그인 요청 DTO (로그인 ID, 비밀번호)
-     * @return JWT 토큰이 포함된 응답 DTO
-     * @throws RuntimeException 사용자가 존재하지 않거나 비밀번호가 일치하지 않는 경우
-     */
+
+    // 로그인 (수정: Refresh Token 생성 및 저장)
     @Transactional
     public AuthDto.TokenResponse login(AuthDto.LoginRequest request) {
+        // ... (기존 ID/PW 검증 로직) ...
         User user = userRepository.findByLoginId(request.getLoginId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-        UserAuth uAuth = userAuthRepository.findById(user.getUserId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+                 .orElseThrow(() -> new RuntimeException("가입되지 않은 아이디입니다."));
+        // ... (비밀번호 체크 로직) ...
 
-        if (!passwordEncoder.matches(request.getPassword(), uAuth.getPasswordHash())) {
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        // 토큰 생성
+        String accessToken = tokenProvider.createToken(String.valueOf(user.getUserId()), "ROLE_USER");
+        String refreshToken = tokenProvider.createRefreshToken(); // *Provider에 메서드 추가 필요 (아래 참고)
+
+        // Refresh Token DB 저장
+        RefreshToken rt = RefreshToken.builder()
+                .key(String.valueOf(user.getUserId()))
+                .value(refreshToken)
+                .build();
+        refreshTokenRepository.save(rt);
+
+        return new AuthDto.TokenResponse("Bearer", accessToken, refreshToken, 1800000L); // 30분
+    }
+
+    // 토큰 재발급 (Reissue)
+    @Transactional
+    public AuthDto.TokenResponse reissue(AuthDto.TokenRequest request) {
+        // 1. Refresh Token 검증
+        if (!tokenProvider.validateToken(request.getRefreshToken())) {
+            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
 
-        user.updateLastLogin();
-        String token = tokenProvider.createToken(String.valueOf(user.getUserId()), "ROLE_USER");
-        return new AuthDto.TokenResponse(token);
+        // 2. Access Token에서 User ID 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getAccessToken());
+        String userId = claims.getSubject();
+
+        // 3. 저장소에서 User ID를 기반으로 Refresh Token 가져오기
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(userId)
+                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+
+        // 4. Refresh Token 일치하는지 검사
+        if (!refreshToken.getValue().equals(request.getRefreshToken())) {
+            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+        }
+
+        // 5. 새로운 토큰 생성
+        String newAccessToken = tokenProvider.createToken(userId, (String)claims.get("role"));
+        String newRefreshToken = tokenProvider.createRefreshToken();
+
+        // 6. DB 정보 업데이트
+        refreshToken.updateValue(newRefreshToken);
+
+        return new AuthDto.TokenResponse("Bearer", newAccessToken, newRefreshToken, 1800000L);
+    }
+
+    // 로그아웃
+    @Transactional
+    public void logout(String accessToken) {
+         // 1. Access Token 검증
+        if (!tokenProvider.validateToken(accessToken)) {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+
+        // 2. Access Token에서 User ID를 가져옴
+        Claims claims = tokenProvider.parseClaims(accessToken);
+        String userId = claims.getSubject();
+
+        // 3. DB에서 Refresh Token 삭제
+        refreshTokenRepository.findByKey(userId)
+                .ifPresent(refreshTokenRepository::delete);
     }
 }

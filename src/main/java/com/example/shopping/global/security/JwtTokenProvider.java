@@ -52,4 +52,30 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    // 토큰에서 Claims 추출 (만료된 토큰이어도 추출 가능하도록 예외 처리)
+    public Claims parseClaims(String accessToken) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+    // 남은 유효시간 계산
+    public long getExpiration(String accessToken) {
+        Date expiration = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody()
+                .getExpiration();
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
+    }
+
+    public String createRefreshToken() {
+        Date now = new Date();
+        return Jwts.builder()
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + 604800000)) // 7일
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
 }
