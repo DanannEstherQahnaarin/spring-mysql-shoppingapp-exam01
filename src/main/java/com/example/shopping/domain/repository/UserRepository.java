@@ -61,4 +61,5 @@ public interface UserRepository extends JpaRepository<User, Long>, UserCusomRepo
      * @return 중복이면 true, 아니면 false
      */
     boolean existsByEmail(String email);
+    
 }

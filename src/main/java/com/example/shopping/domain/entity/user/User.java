@@ -128,10 +128,13 @@ public class User extends BaseTimeEntity {
             joinColumns = @JoinColumn(name = "user_id"), // 내 FK
             inverseJoinColumns = @JoinColumn(name = "role_id") // 상대 FK
     )
+    @Builder.Default
     private List<Role> roles = new ArrayList<>();
 
     // 편의 메서드: 권한 추가
     public void addRole(Role role) {
         this.roles.add(role);
     }
+
+    public void withdraw() { this.status = UserStatus.WITHDRAWN; }
 }

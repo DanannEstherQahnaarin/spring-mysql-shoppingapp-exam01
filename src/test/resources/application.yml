@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: shopping-server
+
+  # 테스트용 데이터소스 설정 (H2 인메모리 DB 사용)
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  # JPA/Hibernate 설정
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+
+  # Spring Security 설정 (기본 인증 비활성화 - 개발용)
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: ADMIN
+
+  # 테스트용 Mail 설정 (더미 설정)
+  mail:
+    host: localhost
+    port: 25
+    username: test
+    password: test
+
+# JWT 설정
+jwt:
+  secret: pZI3Yt3e6Duv37kmjZ6KdK2PvPmCPKW1ydg/RnwFB54=
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
+  issuer: shopping-server
+
+# 서버 설정
+server:
+  port: 0
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    "[com.example.shopping]": DEBUG
+
